@@ -50,9 +50,23 @@ class _MyHomePageState extends State<MyHomePage> {
   var wordInfo;
   var wordList;
 
+  localPath() async {
+    try {
+      String jsonStr = await DefaultAssetBundle.of(context)
+          .loadString('lib/assets/words/cet4.json');
+      wordList = await jsonDecode(jsonStr);
+      setState(() {
+        wordInfo = wordList[_counter];
+      });
+    } catch (err) {
+      print(err);
+    }
+  }
+
   @override
   void initState() {
     super.initState();
+    localPath();
   }
 
   void _incrementCounter() {
@@ -63,7 +77,9 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
-      _counter = _counter % 3;
+      setState(() {
+        wordInfo = wordList[_counter % 3];
+      });
     });
   }
 
@@ -86,6 +102,9 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
+    if (wordInfo == null) {
+      return new Container(width: 0, height: 0);
+    }
     return GestureDetector(
       child: Scaffold(
           // appBar: AppBar(
@@ -95,66 +114,55 @@ class _MyHomePageState extends State<MyHomePage> {
           // ),
           body: GestureDetector(
               onTap: () => _incrementCounter(), //点击
-              child: FutureBuilder(
-                  future: DefaultAssetBundle.of(context)
-                      .loadString('lib/assets/words/cet4.json'),
-                  builder: (context, snapshot) {
-                    // ignore: deprecated_member_use
-                    wordList = jsonDecode(snapshot.data.toString());
-                    if (wordList == null) {
-                      return new Container(width: 0.0, height: 0.0);
-                    }
-                    wordInfo = wordList[_counter];
-                    return Center(
-                      // Center is a layout widget. It takes a single child and positions it
-                      // in the middle of the parent.
-                      child: Flex(
-                        // Column is also layout widget. It takes a list of children and
-                        // arranges them vertically. By default, it sizes itself to fit its
-                        // children horizontally, and tries to be as tall as its parent.
-                        //
-                        // Invoke "debug painting" (press "p" in the console, choose the
-                        // "Toggle Debug Paint" action from the Flutter Inspector in Android
-                        // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-                        // to see the wireframe for each widget.
-                        //
-                        // Column has various properties to control how it sizes itself and
-                        // how it positions its children. Here we use mainAxisAlignment to
-                        // center the children vertically; the main axis here is the vertical
-                        // axis because Columns are vertical (the cross axis would be
-                        // horizontal).
-                        direction: Axis.vertical,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: <Widget>[
-                          Expanded(
-                              flex: 1,
-                              child: Container(
-                                height: 250,
-                                child: Padding(
-                                    padding: EdgeInsets.fromLTRB(0, 200, 0, 20),
-                                    child: Text(
-                                      "${wordInfo['word']}",
-                                      style: new TextStyle(
-                                          fontFamily: 'SansForgetica',
-                                          fontSize: 50),
-                                    )),
+              child: Center(
+                // Center is a layout widget. It takes a single child and positions it
+                // in the middle of the parent.
+                child: Flex(
+                  // Column is also layout widget. It takes a list of children and
+                  // arranges them vertically. By default, it sizes itself to fit its
+                  // children horizontally, and tries to be as tall as its parent.
+                  //
+                  // Invoke "debug painting" (press "p" in the console, choose the
+                  // "Toggle Debug Paint" action from the Flutter Inspector in Android
+                  // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+                  // to see the wireframe for each widget.
+                  //
+                  // Column has various properties to control how it sizes itself and
+                  // how it positions its children. Here we use mainAxisAlignment to
+                  // center the children vertically; the main axis here is the vertical
+                  // axis because Columns are vertical (the cross axis would be
+                  // horizontal).
+                  direction: Axis.vertical,
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                        flex: 1,
+                        child: Container(
+                          height: 250,
+                          child: Padding(
+                              padding: EdgeInsets.fromLTRB(0, 200, 0, 20),
+                              child: Text(
+                                "${wordInfo['word']}",
+                                style: new TextStyle(
+                                    fontFamily: 'SansForgetica', fontSize: 50),
                               )),
-                          Container(
-                              child: Padding(
-                                  padding: EdgeInsets.all(10),
-                                  child: Text(
-                                    "${wordInfo['phoneticSymbol']}",
-                                    style: new TextStyle(fontSize: 20),
-                                  ))),
-                          Container(
-                              child: Padding(
-                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 50),
-                                  child: Column(
-                                      children: chinese(wordInfo['chinese']))))
-                        ],
-                      ),
-                    );
-                  }))),
+                        )),
+                    Container(
+                        child: Padding(
+                            padding: EdgeInsets.all(10),
+                            child: Text(
+                              "${wordInfo['phoneticSymbol']}",
+                              style: new TextStyle(fontSize: 20),
+                            ))),
+                    Container(
+                        child: Padding(
+                            padding: EdgeInsets.fromLTRB(0, 0, 0, 50),
+                            child:
+                                Column(children: chinese(wordInfo['chinese']))))
+                  ],
+                ),
+              ) // This trailing comma makes auto-formatting nicer for build methods.
+              )),
     );
   }
 }
