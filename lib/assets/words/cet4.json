@@ -1,0 +1,24 @@
+[{
+        "id": "001",
+        "word": "alter",
+        "phoneticSymbol": "英 [\"ɔːltə; \"ɒl-]  美 [\"ɔltɚ]",
+        "chinese": [
+            "vt. 改变，更改",
+            "vi. 改变；修改",
+            "n. (Alter)人名；(英)奥尔特；(德、捷、葡、爱沙、立陶、拉脱、俄、西、罗、瑞典)阿尔特"
+        ]
+    },
+    {
+        "id": "002",
+        "word": "prevent",
+        "phoneticSymbol": "英 [prɪ\"vent]  美 [pri\"vɛnt]",
+        "chinese": ["vt. 预防，防止；阻止", "vi. 妨碍，阻止"],
+        "info": "[ 过去式 prevented 过去分词 prevented 现在分词 preventing ]"
+    },
+    {
+        "id": "003",
+        "word": "changes",
+        "phoneticSymbol": "英 [tʃendʒz]  美 [tʃendʒz]",
+        "chinese": ["n. 变化，改变（change的复数）", "v. 改变；交换（change的第三人称单数形式）"]
+    }
+]

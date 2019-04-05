@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 
 void main() => runApp(MyApp());
@@ -47,37 +48,11 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   var wordInfo;
-
-  var wordList = [
-    {
-      "id": '001',
-      "word": 'alter',
-      "phoneticSymbol": '英 [\'ɔːltə; \'ɒl-]  美 [\'ɔltɚ]',
-      "chinese": [
-        'vt. 改变，更改',
-        'vi. 改变；修改',
-        'n. (Alter)人名；(英)奥尔特；(德、捷、葡、爱沙、立陶、拉脱、俄、西、罗、瑞典)阿尔特'
-      ]
-    },
-    {
-      "id": '002',
-      "word": 'prevent',
-      "phoneticSymbol": '英 [prɪ\'vent]  美 [pri\'vɛnt]',
-      "chinese": ['vt. 预防，防止；阻止', 'vi. 妨碍，阻止'],
-      "info": '[ 过去式 prevented 过去分词 prevented 现在分词 preventing ]'
-    },
-    {
-      "id": '003',
-      "word": 'changes',
-      "phoneticSymbol": '英 [tʃendʒz]  美 [tʃendʒz]',
-      "chinese": ['n. 变化，改变（change的复数）', 'v. 改变；交换（change的第三人称单数形式）']
-    }
-  ];
+  var wordList;
 
   @override
   void initState() {
     super.initState();
-    wordInfo = wordList[_counter];
   }
 
   void _incrementCounter() {
@@ -88,7 +63,7 @@ class _MyHomePageState extends State<MyHomePage> {
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
       _counter++;
-      wordInfo = wordList[_counter % 3];
+      _counter = _counter % 3;
     });
   }
 
@@ -96,10 +71,9 @@ class _MyHomePageState extends State<MyHomePage> {
     List<Widget> widges = List();
     if (chinese != null && chinese.length > 0)
       for (var i = 0; i < chinese.length; i++) {
-        widges.add(Text(
-          "${chinese[i]}",
-          style: new TextStyle(fontSize: 20),
-        ));
+        widges.add(Padding(
+            padding: EdgeInsets.fromLTRB(20, 2, 20, 2),
+            child: Text("${chinese[i]}", style: new TextStyle(fontSize: 20))));
       }
     return widges;
   }
@@ -112,56 +86,75 @@ class _MyHomePageState extends State<MyHomePage> {
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
-    return Scaffold(
-      // appBar: AppBar(
-      //   // Here we take the value from the MyHomePage object that was created by
-      //   // the App.build method, and use it to set our appbar title.
-      //   title: Text(widget.title),
-      // ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.start,
-          children: <Widget>[
-            Padding(
-                padding: EdgeInsets.fromLTRB(0, 200, 0, 20),
-                child: Text(
-                  "${wordInfo['word']}",
-                  style:
-                      new TextStyle(fontFamily: 'SansForgetica', fontSize: 40),
-                )),
-            Padding(
-                padding: EdgeInsets.all(10),
-                child: Text(
-                  "${wordInfo['phoneticSymbol']}",
-                  style: new TextStyle(fontSize: 20),
-                )),
-            Column(
-              children: chinese(wordInfo['chinese']),
-            )
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.navigate_next),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+    return GestureDetector(
+      child: Scaffold(
+          // appBar: AppBar(
+          //   // Here we take the value from the MyHomePage object that was created by
+          //   // the App.build method, and use it to set our appbar title.
+          //   title: Text(widget.title),
+          // ),
+          body: GestureDetector(
+              onTap: () => _incrementCounter(), //点击
+              child: FutureBuilder(
+                  future: DefaultAssetBundle.of(context)
+                      .loadString('lib/assets/words/cet4.json'),
+                  builder: (context, snapshot) {
+                    // ignore: deprecated_member_use
+                    wordList = jsonDecode(snapshot.data.toString());
+                    if (wordList == null) {
+                      return new Container(width: 0.0, height: 0.0);
+                    }
+                    wordInfo = wordList[_counter];
+                    return Center(
+                      // Center is a layout widget. It takes a single child and positions it
+                      // in the middle of the parent.
+                      child: Flex(
+                        // Column is also layout widget. It takes a list of children and
+                        // arranges them vertically. By default, it sizes itself to fit its
+                        // children horizontally, and tries to be as tall as its parent.
+                        //
+                        // Invoke "debug painting" (press "p" in the console, choose the
+                        // "Toggle Debug Paint" action from the Flutter Inspector in Android
+                        // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+                        // to see the wireframe for each widget.
+                        //
+                        // Column has various properties to control how it sizes itself and
+                        // how it positions its children. Here we use mainAxisAlignment to
+                        // center the children vertically; the main axis here is the vertical
+                        // axis because Columns are vertical (the cross axis would be
+                        // horizontal).
+                        direction: Axis.vertical,
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: <Widget>[
+                          Expanded(
+                              flex: 1,
+                              child: Container(
+                                height: 250,
+                                child: Padding(
+                                    padding: EdgeInsets.fromLTRB(0, 200, 0, 20),
+                                    child: Text(
+                                      "${wordInfo['word']}",
+                                      style: new TextStyle(
+                                          fontFamily: 'SansForgetica',
+                                          fontSize: 50),
+                                    )),
+                              )),
+                          Container(
+                              child: Padding(
+                                  padding: EdgeInsets.all(10),
+                                  child: Text(
+                                    "${wordInfo['phoneticSymbol']}",
+                                    style: new TextStyle(fontSize: 20),
+                                  ))),
+                          Container(
+                              child: Padding(
+                                  padding: EdgeInsets.fromLTRB(0, 0, 0, 50),
+                                  child: Column(
+                                      children: chinese(wordInfo['chinese']))))
+                        ],
+                      ),
+                    );
+                  }))),
     );
   }
 }
